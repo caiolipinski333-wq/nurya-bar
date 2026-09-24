@@ -1,0 +1,485 @@
+/* -----------------------------------------------------------
+   Fonte da marca — arquivo original, carregado localmente
+----------------------------------------------------------- */
+@font-face{
+  font-family:'Anglerhand';
+  src:url('fonts/Anglerhand.otf') format('opentype');
+  font-weight:normal;
+  font-style:normal;
+  font-display:swap;
+}
+
+/* -----------------------------------------------------------
+   Marca Nurya — tokens de cor e tipografia
+----------------------------------------------------------- */
+:root{
+  --navy-0:#0a0f1c;
+  --navy-1:#101a30;
+  --bone:#ece3d0;
+  --bone-dim:#c9bfa9;
+  --rust:#c2542e;
+  --rust-2:#e07242;
+  --line: rgba(236,227,208,0.14);
+}
+
+*{ margin:0; padding:0; box-sizing:border-box; }
+
+html, body{
+  background:var(--navy-0);
+  color:var(--bone);
+  font-family:'Reem Kufi', sans-serif;
+}
+
+/* -----------------------------------------------------------
+   Nav simples, fixa no topo
+----------------------------------------------------------- */
+.site-nav{
+  position:fixed;
+  top:0; left:0; right:0;
+  z-index:20;
+  padding:26px clamp(20px,5vw,64px);
+  mix-blend-mode:difference;
+}
+.brand-mark{
+  font-family:'Anglerhand','Bebas Neue';font-weight:400;font-size:1.3rem;
+  letter-spacing:0.1em;color:var(--bone);
+}
+
+/* -----------------------------------------------------------
+   Wrapper da sequência.
+   A ALTURA deste elemento é a distância de scroll da animação.
+   Definida via JS (script.js seta --scroll-length), o valor aqui é
+   só um fallback antes do JS rodar.
+----------------------------------------------------------- */
+.sequence-pin{
+  position:relative;
+  height: var(--scroll-length, 350vh);
+}
+
+.sequence-sticky{
+  position:sticky;
+  top:0;
+  height:100vh;
+  height:100dvh;
+  width:100%;
+  overflow:hidden;
+  background:var(--navy-0);
+}
+
+#sequenceCanvas{
+  display:block;
+  width:100%;
+  height:100%;
+}
+
+/* degradê do lado esquerdo, pra qualquer frame do prato manter o
+   texto legível sem precisar de uma caixa/fundo sólido atrás dele */
+.side-fade{
+  position:absolute;
+  inset:0;
+  z-index:1;
+  background:linear-gradient(
+    100deg,
+    rgba(10,15,28,0.88) 0%,
+    rgba(10,15,28,0.55) 32%,
+    rgba(10,15,28,0.05) 58%,
+    rgba(10,15,28,0) 100%
+  );
+  pointer-events:none;
+}
+
+/* -----------------------------------------------------------
+   Painel de informação — sempre à esquerda
+----------------------------------------------------------- */
+.info-panel{
+  position:absolute;
+  inset:0;
+  z-index:2;
+  display:flex;
+  align-items:center;
+  padding:0 clamp(20px,6vw,80px);
+  pointer-events:none;
+}
+
+.station{
+  position:absolute;
+  left:clamp(20px,6vw,80px);
+  right:clamp(20px,6vw,80px);
+  max-width:560px;
+  opacity:0;
+  transform:translateY(18px);
+  transition:opacity .6s ease, transform .6s ease;
+}
+.station.is-active{
+  opacity:1;
+  transform:translateY(0);
+}
+
+.label{
+  font-family:'Anglerhand','Bebas Neue';font-weight:400;
+  font-size:0.95rem;letter-spacing:0.2em;color:var(--rust-2);
+  margin-bottom:18px;display:block;
+}
+
+.big-line{
+  font-family:'Anglerhand','Bebas Neue';font-weight:400;text-transform:uppercase;
+  font-size:clamp(2rem,5vw,3.6rem);line-height:1.08;letter-spacing:0.01em;
+  color:var(--bone);
+}
+.big-line em{
+  font-family:'Fraunces';font-style:italic;text-transform:none;
+  color:var(--rust-2);font-weight:400;
+}
+
+.station-text{
+  margin-top:18px;
+  font-size:1rem;line-height:1.75;color:var(--bone-dim);max-width:42ch;
+}
+
+/* hero: agora é a logo real (SVG embutido) no lugar do texto cursivo */
+.wordmark{
+  display:flex;
+}
+.wordmark-logo{
+  width:clamp(220px, 34vw, 460px);
+  height:auto;
+  color:var(--bone);
+  filter:drop-shadow(0 4px 30px rgba(0,0,0,0.35));
+  animation:logo-glow 9s ease-in-out infinite;
+}
+@keyframes logo-glow{
+  0%, 100%{ color:var(--bone); }
+  50%{ color:var(--rust-2); }
+}
+
+/* -----------------------------------------------------------
+   Ambiente — depois que a sequência do prato termina
+----------------------------------------------------------- */
+.atmosphere{
+  position:relative;
+  min-height:100vh;
+  overflow:hidden;
+  display:flex;
+  align-items:flex-end;
+}
+.atmosphere-media{ position:absolute; left:0; right:0; top:-6%; height:112%; z-index:0; overflow:hidden; }
+.atmosphere-media img{
+  width:100%; height:100%; object-fit:cover; display:block;
+  filter:brightness(0.75) saturate(1.05);
+}
+.atmosphere-overlay{
+  position:absolute; inset:0; z-index:1;
+  background:linear-gradient(0deg, rgba(10,15,28,0.92) 8%, rgba(10,15,28,0.4) 55%, rgba(10,15,28,0.1) 100%);
+}
+.atmosphere-copy{
+  position:relative; z-index:2;
+  padding:clamp(60px,10vw,120px) clamp(20px,6vw,80px);
+  max-width:720px;
+}
+.atmosphere-copy .big-line{ font-size:clamp(1.8rem,4vw,3rem); max-width:18ch; }
+
+/* -----------------------------------------------------------
+   Equipe — foto de bastidor + lista editorial de créditos
+----------------------------------------------------------- */
+.team{
+  position:relative;
+  min-height:100vh;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+}
+.team-media{ position:absolute; left:0; right:0; top:-6%; height:112%; z-index:0; overflow:hidden; }
+.team-media img{
+  width:100%; height:100%; object-fit:cover; display:block;
+  filter:grayscale(0.15) contrast(1.05) brightness(0.6);
+}
+.team-overlay{
+  position:absolute; inset:0; z-index:1;
+  background:linear-gradient(100deg, rgba(10,15,28,0.94) 0%, rgba(10,15,28,0.75) 42%, rgba(10,15,28,0.35) 100%);
+}
+.team-copy{
+  position:relative; z-index:2;
+  padding:clamp(60px,10vw,120px) clamp(20px,6vw,80px);
+  max-width:640px;
+}
+.team-copy .big-line{ font-size:clamp(1.8rem,4vw,3rem); max-width:16ch; margin-bottom:clamp(30px,5vw,54px); }
+
+.team-list{ list-style:none; }
+.team-list li{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  gap:20px;
+  padding:16px 0;
+  border-bottom:1px solid var(--line);
+}
+.team-list li:first-child{ border-top:1px solid var(--line); }
+.team-role{
+  font-family:'Anglerhand','Bebas Neue';font-weight:400;letter-spacing:0.1em;
+  font-size:0.85rem;color:var(--rust-2);text-transform:uppercase;
+  white-space:nowrap;
+}
+.team-name{
+  font-family:'Fraunces';font-style:italic;font-weight:400;
+  font-size:clamp(1.1rem,2.4vw,1.5rem);color:var(--bone);
+  text-align:right;
+}
+
+@media (max-width:480px){
+  .team-list li{ flex-direction:column; align-items:flex-start; gap:4px; }
+  .team-name{ text-align:left; }
+}
+
+/* -----------------------------------------------------------
+   Reserva — última seção, mesmo padrão visual de Ambiente/Equipe
+----------------------------------------------------------- */
+.reserve{
+  position:relative;
+  min-height:100vh;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+.reserve-media{ position:absolute; left:0; right:0; top:-6%; height:112%; z-index:0; overflow:hidden; }
+.reserve-media img{
+  width:100%; height:100%; object-fit:cover; display:block;
+  filter:brightness(0.55) saturate(1.05);
+  transform:scale(1.12);
+  transition:transform 1.6s cubic-bezier(.16,.8,.2,1);
+}
+.reserve.is-visible .reserve-media img{ transform:scale(1.02); }
+.reserve-overlay{
+  position:absolute; inset:0; z-index:1;
+  background:radial-gradient(ellipse at center, rgba(10,15,28,0.55) 0%, rgba(10,15,28,0.88) 75%);
+}
+.reserve-copy{
+  position:relative; z-index:2;
+  padding:clamp(60px,10vw,120px) clamp(20px,6vw,80px);
+  max-width:640px;
+  margin:0 auto;
+}
+.reserve-copy .big-line{ font-size:clamp(1.9rem,4.2vw,3.2rem); max-width:16ch; margin:0 auto; }
+.reserve-text{
+  margin-top:22px;
+  font-size:1rem;line-height:1.8;color:var(--bone-dim);
+  max-width:44ch;margin-left:auto;margin-right:auto;
+}
+
+.cta-btn{
+  display:inline-block;
+  margin-top:32px;
+  padding:14px 34px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  color:var(--bone);
+  text-decoration:none;
+  font-family:'Anglerhand','Bebas Neue';letter-spacing:0.08em;font-size:0.95rem;
+  transition:background .3s ease, border-color .3s ease, color .3s ease;
+}
+.cta-btn:hover{
+  background:var(--rust-2);
+  border-color:var(--rust-2);
+  color:var(--navy-0);
+}
+
+/* -----------------------------------------------------------
+   Reveal on scroll — fade + leve deslocamento pra cima.
+   O JS adiciona .is-visible quando o elemento entra na tela
+   (via IntersectionObserver) e aplica um atraso crescente entre
+   irmãos, pra dar aquele efeito de "cascata" em vez de tudo
+   aparecer junto.
+----------------------------------------------------------- */
+.reveal{
+  opacity:0;
+  transform:translateY(28px);
+  transition:opacity .8s cubic-bezier(.2,.7,.2,1), transform .8s cubic-bezier(.2,.7,.2,1);
+  will-change:opacity, transform;
+}
+.reveal.is-visible{
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* zoom lento nas fotos de fundo: começam levemente ampliadas e
+   relaxam pro tamanho normal enquanto a seção é revelada, e depois
+   continuam se deslocando bem sutilmente com o parallax do JS */
+.atmosphere-media img,
+.team-media img{
+  transform:scale(1.12);
+  transition:transform 1.6s cubic-bezier(.16,.8,.2,1);
+}
+.atmosphere.is-visible .atmosphere-media img,
+.team.is-visible .team-media img{
+  transform:scale(1.02);
+}
+
+@media (prefers-reduced-motion: reduce){
+  .reveal{
+    opacity:1;
+    transform:none;
+    transition:none;
+  }
+  .atmosphere-media img,
+  .team-media img{
+    transform:none;
+    transition:none;
+  }
+}
+
+/* -----------------------------------------------------------
+   Loader
+----------------------------------------------------------- */
+.loader{
+  position:absolute;
+  inset:0;
+  z-index:5;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  background:var(--navy-0);
+  color:var(--bone-dim);
+  font-family:'Reem Kufi';
+  font-size:14px;
+  letter-spacing:0.04em;
+  transition:opacity .5s ease;
+  pointer-events:none;
+}
+.loader.is-hidden{
+  opacity:0;
+}
+
+.loader-bar{
+  width:min(60vw, 260px);
+  height:3px;
+  background:var(--line);
+  border-radius:2px;
+  overflow:hidden;
+}
+.loader-fill{
+  height:100%;
+  width:0%;
+  background:var(--rust-2);
+  transition:width .15s ease;
+}
+
+/* -----------------------------------------------------------
+   prefers-reduced-motion:
+   sem rolagem forçada — mostra só a estação final (CTA) fixa,
+   sem esperar o usuário rolar pra ver a chamada pra reserva.
+----------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce){
+  .sequence-pin{
+    height:100vh;
+    height:100dvh;
+  }
+  .loader-fill{
+    transition:none;
+  }
+  .wordmark-logo{
+    animation:none;
+  }
+}
+
+@media (max-width:640px){
+  .station{ max-width:calc(100% - clamp(40px,12vw,160px)); }
+}
+
+/* -----------------------------------------------------------
+   Cardápio — grade de cards estilo App Store (View Transition)
+----------------------------------------------------------- */
+.menu{
+  padding:clamp(90px,14vw,180px) clamp(20px,6vw,80px);
+  background:rgba(10,15,28,0.75);
+}
+.menu-intro{ max-width:640px; margin:0 auto clamp(50px,8vw,90px); }
+.menu-intro .big-line{ font-size:clamp(1.8rem,4vw,3rem); }
+
+.dish-grid{
+  list-style:none; display:grid; grid-template-columns:repeat(2,1fr);
+  gap:22px; max-width:820px; margin:0 auto;
+}
+@media(max-width:640px){ .dish-grid{ grid-template-columns:1fr; max-width:440px; } }
+
+.dish-card{
+  position:relative; aspect-ratio:1/1; border-radius:22px; overflow:hidden;
+  cursor:pointer; background:var(--navy-2, #16233f);
+  box-shadow:0 20px 50px -20px rgba(0,0,0,0.55);
+  transition:transform .65s cubic-bezier(0.22,1,0.36,1), opacity .65s cubic-bezier(0.22,1,0.36,1);
+  will-change:transform, opacity; /* só 4 elementos — seguro manter */
+}
+.card-photo{
+  position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block;
+  transition:transform .5s ease;
+  will-change:transform; /* só 4 imagens — hint seguro pra já ficarem numa camada de GPU */
+}
+.dish-card:hover .card-photo{ transform:scale(1.06); }
+.card-scrim{
+  position:absolute; inset:0;
+  background:linear-gradient(0deg, rgba(10,15,28,0.88) 0%, rgba(10,15,28,0.1) 60%);
+}
+.dish-card .title-container{
+  position:absolute; left:0; right:0; bottom:0; z-index:2;
+  padding:18px 20px;
+}
+.dish-num{ font-size:0.68rem; color:var(--rust-2); letter-spacing:0.14em; }
+.dish-card h3{
+  font-family:'Fraunces'; font-style:italic; font-weight:400;
+  font-size:1.3rem; color:var(--bone); margin-top:6px;
+}
+.dish-short{ display:none; font-size:0.85rem; color:var(--bone-dim); margin-top:6px; line-height:1.5; }
+.dish-card .content-container.hidden{ display:none; }
+
+.close-btn{
+  position:absolute; top:18px; right:18px; z-index:3;
+  width:38px; height:38px; border-radius:50%;
+  background:rgba(10,15,28,0.55); color:var(--bone);
+  border:1px solid var(--line); font-size:1.25rem; line-height:1;
+  align-items:center; justify-content:center; cursor:pointer;
+  display:none;
+}
+.dish-card.expanded .close-btn{ display:flex; }
+
+.dish-card.expanded{
+  position:fixed; inset:0; z-index:1000;
+  aspect-ratio:auto; border-radius:0; box-shadow:none;
+  display:block; overflow-y:auto; background:var(--navy-0);
+}
+.dish-card.expanded .card-photo{ position:relative; width:100%; height:48vh; transform:none; }
+.dish-card.expanded .card-scrim{ display:none; }
+.dish-card.expanded .title-container{
+  position:relative; padding:28px clamp(20px,6vw,70px) 0;
+}
+.dish-card.expanded h3{ font-size:clamp(1.9rem,4vw,2.7rem); }
+.dish-card.expanded .dish-short{ display:block; font-size:1rem; margin-top:10px; }
+.dish-card.expanded .content-container.hidden{ display:none; }
+.dish-card.expanded .content-container{
+  display:block; padding:22px clamp(20px,6vw,70px) 70px;
+}
+.dish-card.expanded .content-container p{
+  color:var(--bone-dim); font-size:1rem; line-height:1.85; max-width:60ch;
+}
+
+.dish-grid.has-expanded .dish-card:not(.expanded){
+  /* opacity + transform são "baratos" (só a GPU recompõe, sem
+     redesenhar nada) — blur() força um re-render pesado a cada
+     quadro, e fazer isso em 3 cards ao mesmo tempo que a View
+     Transition roda é o que travava o clique */
+  transform:scale(0.94); opacity:0.4;
+  pointer-events:none; transition:transform .65s ease, opacity .65s ease;
+}
+body.dish-open{ overflow:hidden; }
+
+/* curva bem suave e mais lenta, sem "salto" no começo — a foto abre
+   num ritmo constante e deliciosamente devagar, sem parecer travar */
+::view-transition-group(*){
+  animation-duration:0.65s;
+  animation-timing-function:cubic-bezier(0.22,1,0.36,1);
+}
+::view-transition-old(*), ::view-transition-new(*){
+  animation-duration:0.65s;
+  animation-timing-function:cubic-bezier(0.22,1,0.36,1);
+}
